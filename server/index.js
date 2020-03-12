@@ -1,7 +1,10 @@
 const express = require('express')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
+const mongoose = require('mongoose')
+const routes = require('./routes')
 const app = express()
+require('dotenv').config()
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
@@ -20,8 +23,17 @@ async function start () {
     await builder.build()
   }
 
+  app.use(express.json())
+
+  app.use('/api', routes)
+
   // Give nuxt middleware to express
   app.use(nuxt.render)
+
+  //connect to database
+  mongoose.connect(process.env.DB_URI, {useNewUrlParser: true, useUnifiedTopology: true}, (err) => {
+    if(err) throw err
+  })
 
   // Listen the server
   app.listen(port, host)

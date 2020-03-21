@@ -1,5 +1,6 @@
 const pasienModel = require('../models/pasien.model')
 const response = require('../utils/response')
+const databaru = require('../utils/databaseUpdate')
 
 const get = (req, res) => {
   let condition = req.query
@@ -13,6 +14,9 @@ const create = (req, res) => {
   let pasien = req.body.pasien
   pasienModel.create(pasien, (err) => {
     if(err) return response.error(res, err)
+    databaru.update('pasien', (err) => {
+      if(err) return response.error(res, err)
+    })
     return response.success(res, 'data pasien berhasil disimpan')
   })
 }
@@ -22,6 +26,9 @@ const update = (req, res) => {
   let update = req.body.update
   pasienModel.updateMany(condition, update, (err) => {
     if(err) return response.error(res, err)
+    databaru.update('pasien', (err) => {
+      if(err) return response.error(res, err)
+    })
     return response.success(res, 'data pasien berhasil diubah')
   })
 }
@@ -30,6 +37,9 @@ const destroy = (req, res) => {
   let condition = req.body.condition
   pasienModel.deleteMany(condition, (err) => {
     if(err) return response.error(res, err)
+    databaru.update('pasien', (err) => {
+      if(err) return response.error(res, err)
+    })
     return response.success(res, 'data pasien berhasil dihapus')
   })
 }

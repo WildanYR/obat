@@ -95,13 +95,18 @@ export default {
       cariHerbal: '',
       currentHerbal: {},
       headers: [
-        { text: 'Nama', value: 'herbal' },
+        { text: 'Nama', value: 'nama' },
         { text: 'Aksi', value: 'action', width: 140, align: 'end', sortable: false }
       ]
     }
   },
-  fetch({store}){
-    
+  async fetch({$axios, store}){
+    let herbalUpdate = await $axios.$post('/databaru', {model: 'herbal'})
+    if(!store.state.herbal.length || herbalUpdate.data.hash != store.state.update['herbal']){
+      let herbal = await $axios.$get('/herbal')
+      store.commit('setHerbal', herbal.data)
+      store.commit('setUpdate', herbalUpdate.data)
+    }
   },
   methods: {
     dialogAdd(){

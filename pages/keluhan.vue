@@ -95,155 +95,17 @@ export default {
       cariKeluhan: '',
       currentKeluhan: {},
       headers: [
-        { text: 'Nama', value: 'keluhan' },
+        { text: 'Nama', value: 'nama' },
         { text: 'Aksi', value: 'action', width: 140, align: 'end', sortable: false }
       ]
     }
   },
-  fetch({store}){
-    if(!store.state.keluhan.length){
-      store.commit('setKeluhan', [
-        {
-            id: "5e67489f36727f2460a9530e",
-            keluhan: "Kesemutan"
-        },
-        {
-            id: "5e67489f36727f2460a9530f",
-            keluhan: "Pusing"
-        },
-        {
-            id: "5e67489f36727f2460a95310",
-            keluhan: "Nyeri"
-        },
-        {
-            id: "5e67489f36727f2460a95311",
-            keluhan: "Rasa Panas"
-        },
-        {
-            id: "5e67489f36727f2460a95312",
-            keluhan: "Rasa Kaku"
-        },
-        {
-            id: "5e67489f36727f2460a95313",
-            keluhan: "Gatal"
-        },
-        {
-            id: "5e67489f36727f2460a95314",
-            keluhan: "Pandangan Kabur"
-        },
-        {
-            id: "5e67489f36727f2460a95315",
-            keluhan: "Rasa Berat"
-        },
-        {
-            id: "5e67489f36727f2460a95316",
-            keluhan: "Hidung Tersumbat"
-        },
-        {
-            id: "5e67489f36727f2460a95317",
-            keluhan: "Hidung Meler"
-        },
-        {
-            id: "5e67489f36727f2460a95318",
-            keluhan: "Telinga Berdenging"
-        },
-        {
-            id: "5e67489f36727f2460a95319",
-            keluhan: "Telinga Bernanah"
-        },
-        {
-            id: "5e67489f36727f2460a9531a",
-            keluhan: "Bau Mulut"
-        },
-        {
-            id: "5e67489f36727f2460a9531b",
-            keluhan: "Lidah Pahit"
-        },
-        {
-            id: "5e67489f36727f2460a9531c",
-            keluhan: "Bengkak"
-        },
-        {
-            id: "5e67489f36727f2460a9531d",
-            keluhan: "Susah Menelan"
-        },
-        {
-            id: "5e67489f36727f2460a9531e",
-            keluhan: "Tenggorokan Panas"
-        },
-        {
-            id: "5e67489f36727f2460a9531f",
-            keluhan: "Batuk Berdahak"
-        },
-        {
-            id: "5e67489f36727f2460a95320",
-            keluhan: "Batuk Kering"
-        },
-        {
-            id: "5e67489f36727f2460a95321",
-            keluhan: "Benjolan"
-        },
-        {
-            id: "5e67489f36727f2460a95322",
-            keluhan: "Sesak"
-        },
-        {
-            id: "5e67489f36727f2460a95323",
-            keluhan: "Deg-Degan"
-        },
-        {
-            id: "5e67489f36727f2460a95324",
-            keluhan: "Mual"
-        },
-        {
-            id: "5e67489f36727f2460a95325",
-            keluhan: "Muntah"
-        },
-        {
-            id: "5e67489f36727f2460a95327",
-            keluhan: "Susah BAB"
-        },
-        {
-            id: "5e67489f36727f2460a95328",
-            keluhan: "BAB Cair"
-        },
-        {
-            id: "5e67489f36727f2460a95326",
-            keluhan: "Kembung"
-        },
-        {
-            id: "5e67489f36727f2460a95329",
-            keluhan: "BAB Berdarah"
-        },
-        {
-            id: "5e67489f36727f2460a9532a",
-            keluhan: "BAK Berlebih"
-        },
-        {
-            id: "5e67489f36727f2460a9532b",
-            keluhan: "Ngompol"
-        },
-        {
-            id: "5e67489f36727f2460a9532c",
-            keluhan: "Keringat Dingin"
-        },
-        {
-            id: "5e67489f36727f2460a9532e",
-            keluhan: "Lemah Syahwat"
-        },
-        {
-            id: "5e67489f36727f2460a95330",
-            keluhan: "Rambut Rontok"
-        },
-        {
-            id: "5e67489f36727f2460a9532f",
-            keluhan: "Mudah Lemas"
-        },
-        {
-            id: "5e67489f36727f2460a9532d",
-            keluhan: "Masalah Haid"
-        }
-      ])
+  async fetch({$axios, store}){
+    let keluhanUpdate = await $axios.$post('/databaru', {model: 'keluhan'})
+    if(!store.state.keluhan.length || keluhanUpdate.data.hash != store.state.update['keluhan']){
+      let keluhan = await $axios.$get('/keluhan')
+      store.commit('setKeluhan', keluhan.data)
+      store.commit('setUpdate', keluhanUpdate.data)
     }
   },
   methods: {

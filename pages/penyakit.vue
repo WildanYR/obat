@@ -95,13 +95,18 @@ export default {
       cariPenyakit: '',
       currentPenyakit: {},
       headers: [
-        { text: 'Nama', value: 'penyakit' },
+        { text: 'Nama', value: 'nama' },
         { text: 'Aksi', value: 'action', width: 140, align: 'end', sortable: false }
       ]
     }
   },
-  fetch({store}){
-    
+  async fetch({$axios, store}){
+    let penyakitUpdate = await $axios.$post('/databaru', {model: 'penyakit'})
+    if(!store.state.penyakit.length || penyakitUpdate.data.hash != store.state.update['penyakit']){
+      let penyakit = await $axios.$get('/penyakit')
+      store.commit('setPenyakit', penyakit.data)
+      store.commit('setUpdate', penyakitUpdate.data)
+    }
   },
   methods: {
     dialogAdd(){

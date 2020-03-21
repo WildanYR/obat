@@ -29,7 +29,7 @@
                     </v-col>
                     <v-col cols="12">
                         <v-autocomplete
-                          :items="$store.state.penyakit"
+                          :items="$store.state.penyakit.map(x => x.nama)"
                           v-model="currentPasien.riwayat_penyakit"
                           attach
                           dense
@@ -109,7 +109,7 @@
                   {{ item.jenis_kelamin ? 'Laki-Laki':'Perempuan'}}
                 </template>
                 <template v-slot:item.action={item}>
-                  <v-btn color="success" small @click="routeDetail(item)">
+                  <v-btn color="success" small>
                     <v-icon x-small>fas fa-notes-medical</v-icon>
                   </v-btn>
                   <v-btn color="warning" small @click="dialogEdit(item)">
@@ -156,63 +156,21 @@ export default {
       ]
     }
   },
-  fetch({store}){    
-    if(!store.state.pasien.length){
-      store.commit('setPasien', [
-        {
-          id: '1',
-          riwayat_penyakit: [],
-          nama: "Hasan",
-          jenis_kelamin: true,
-          alamat: "gurun",
-          telp: "0866519275519",
-        },
-        {
-          id: '2',
-          riwayat_penyakit: [
-              "Hipertensi"
-          ],
-          nama: "Utami",
-          jenis_kelamin: false,
-          alamat: "laut",
-          telp: "0977625189451",
-        },
-        {
-          id: '3',
-          riwayat_penyakit: [
-              "Katarak",
-              "Stroke"
-          ],
-          nama: "Mamang",
-          jenis_kelamin: true,
-          alamat: "sungai",
-          telp: "66729834791048",
-        },
-        {
-          id: '4',
-          riwayat_penyakit: [],
-          nama: "Tika",
-          jenis_kelamin: false,
-          alamat: "hutan",
-          telp: "5831748766761",
-        }
-      ])
+  async fetch({$axios, store}){
+    let pasienUpdate = await $axios.$post('/databaru', {model: 'pasien'})
+    if(!store.state.pasien.length || pasienUpdate.data.hash != store.state.update['pasien']){
+      let pasien = await $axios.$get('/pasien')
+      store.commit('setPasien', pasien.data)
+      store.commit('setUpdate', pasienUpdate.data)
     }
-    if(!store.state.penyakit.length){
-      store.commit('setPenyakit',  [
-        'Kencing Manis',
-        'Stroke',
-        'Katarak',
-        'Jantung Koroner',
-        'Hipertensi',
-        'Gagal Ginjal'
-      ])
+    let penyakitUpdate = await $axios.$post('/databaru', {model: 'penyakit'})
+    if(!store.state.penyakit.length || penyakitUpdate.data.hash != store.state.update['penyakit']){
+      let penyakit = await $axios.$get('/penyakit')
+      store.commit('setPenyakit', penyakit.data)
+      store.commit('setUpdate', penyakitUpdate.data)
     }
   },
   methods: {
-    routeDetail(item){
-      //this.$router.push('pasien/'+item.id)
-    },
     dialogAdd(){
       this.currentPasien = {}
       this.dialog.addPasien = true

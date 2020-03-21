@@ -100,13 +100,12 @@ export default {
       ]
     }
   },
-  fetch({store}){
-    if(!store.state.terapis.length){
-      store.commit('setTerapis', [
-        {nama: 'Joko'},
-        {nama: 'Heru'},
-        {nama: 'Bambang'}
-      ])
+  async fetch({$axios, store}){
+    let terapisUpdate = await $axios.$post('/databaru', {model: 'terapis'})
+    if(!store.state.terapis.length || terapisUpdate.data.hash != store.state.update['terapis']){
+      let terapis = await $axios.$get('/terapis')
+      store.commit('setTerapis', terapis.data)
+      store.commit('setUpdate', terapisUpdate.data)
     }
   },
   methods: {

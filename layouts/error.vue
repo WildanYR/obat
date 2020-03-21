@@ -1,44 +1,25 @@
 <template>
-  <v-app dark>
-    <h1 v-if="error.statusCode === 404">
-      {{ pageNotFound }}
-    </h1>
-    <h1 v-else>
-      {{ otherError }}
-    </h1>
-    <NuxtLink to="/">
-      Home page
-    </NuxtLink>
-  </v-app>
+  <div class="text-center">
+    <div class="headline grey--text text--lighten-1">ERROR</div>
+    <div v-if="error.statusCode === 404">
+      <div class="display-4 font-weight-bold">404</div>
+      <div class="subtitle-1">Halaman tidak ditemukan</div>
+    </div>
+    <div v-else-if="error.statusCode === 408">
+      <div class="display-4 font-weight-bold">408</div>
+      <div class="subtitle-1">Request Timeout</div>
+    </div>
+    <div v-else>
+      <div class="display-4 font-weight-bold">500</div>
+      <div class="subtitle-1">Terjadi error pada server</div>
+    </div>
+    <nuxt-link to="/">Kembali</nuxt-link>
+  </div>
 </template>
 
 <script>
 export default {
-  layout: 'empty',
-  props: {
-    error: {
-      type: Object,
-      default: null
-    }
-  },
-  data () {
-    return {
-      pageNotFound: '404 Not Found',
-      otherError: 'An error occurred'
-    }
-  },
-  head () {
-    const title =
-      this.error.statusCode === 404 ? this.pageNotFound : this.otherError
-    return {
-      title
-    }
-  }
+  props: ['error'],
+  layout: 'err'
 }
 </script>
-
-<style scoped>
-h1 {
-  font-size: 20px;
-}
-</style>

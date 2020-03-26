@@ -44,7 +44,7 @@ export default {
       drawer: true,
       dark: false,
       navs: [
-        {title: 'Dashboard', to: '/', icon: 'fas fa-home'},
+        //{title: 'Dashboard', to: '/', icon: 'fas fa-home'},
         {title: 'Pasien', to: '/pasien', icon: 'fas fa-user-injured'},
         {title: 'Terapis', to: '/terapis', icon: 'fas fa-user-md'},
         {title: 'Keluhan', to: '/keluhan', icon: 'fas fa-comment-medical'},

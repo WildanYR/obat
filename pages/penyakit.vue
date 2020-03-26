@@ -20,8 +20,8 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="dialog.additPenyakit = false">Batal</v-btn>
-                <v-btn v-if="dialog.addPenyakit" color="blue darken-1" text>Tambah</v-btn>
-                <v-btn v-else color="blue darken-1" text>Ubah</v-btn>
+                <v-btn v-if="dialog.addPenyakit" color="blue darken-1" text @click="addPenyakit">Tambah</v-btn>
+                <v-btn v-else color="blue darken-1" text @click="editPenyakit">Ubah</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -31,7 +31,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="green darken-1" text @click="dialog.hapusPenyakit = false">Tidak</v-btn>
-                <v-btn color="red darken-1" text>Ya</v-btn>
+                <v-btn color="red darken-1" text @click="deletePenyakit">Ya</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -101,12 +101,14 @@ export default {
     }
   },
   async fetch({$axios, store}){
-    let penyakitUpdate = await $axios.$post('/databaru', {model: 'penyakit'})
-    if(!store.state.penyakit.length || penyakitUpdate.data.hash != store.state.update['penyakit']){
-      let penyakit = await $axios.$get('/penyakit')
-      store.commit('setPenyakit', penyakit.data)
-      store.commit('setUpdate', penyakitUpdate.data)
-    }
+    let penyakit = await $axios.$get('/penyakit')
+    store.commit('setPenyakit', penyakit.data)
+    // let penyakitUpdate = await $axios.$post('/databaru', {model: 'penyakit'})
+    // if(!store.state.penyakit.length || penyakitUpdate.data.hash != store.state.update['penyakit']){
+    //   let penyakit = await $axios.$get('/penyakit')
+    //   store.commit('setPenyakit', penyakit.data)
+    //   store.commit('setUpdate', penyakitUpdate.data)
+    // }
   },
   methods: {
     dialogAdd(){
@@ -122,6 +124,38 @@ export default {
     dialogDelete(item){
       this.currentPenyakit = JSON.parse(JSON.stringify(item))
       this.dialog.hapusPenyakit = true
+    },
+    async addPenyakit(){
+      try {
+        await this.$axios.$post('/penyakit', {penyakit: this.currentPenyakit})
+        let penyakit = await this.$axios.$get('/penyakit')
+        this.$store.commit('setPenyakit', penyakit.data)
+        this.dialog.additPenyakit = false
+      }catch (e){
+        console.log(e)
+      }
+    },
+    async editPenyakit(){
+      try {
+        let id = this.currentPenyakit._id
+        delete this.currentPenyakit._id
+        await this.$axios.$post('/penyakit/u', {condition: {_id: id}, update: this.currentPenyakit})
+        let penyakit = await this.$axios.$get('/penyakit')
+        this.$store.commit('setPenyakit', penyakit.data)
+        this.dialog.additPenyakit = false
+      }catch (e){
+        console.log(e)
+      }
+    },
+    async deletePenyakit(){
+      try {
+        await this.$axios.$post('/penyakit/d', {condition: {_id: this.currentPenyakit._id}})
+        let penyakit = await this.$axios.$get('/penyakit')
+        this.$store.commit('setPenyakit', penyakit.data)
+        this.dialog.hapusPenyakit = false
+      }catch (e){
+        console.log(e)
+      }
     }
   }
 }

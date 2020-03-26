@@ -3,15 +3,15 @@ const kedatanganModel = require('../models/kedatangan.model')
 const response = require('../utils/response')
 const databaru = require('../utils/databaseUpdate')
 
-const riwayat = (req, res) => {
+const get = (req, res) => {
   let pasienID = req.body.id
   pasienModel.findById(pasienID, (err, data) => {
     if(err) return response.error(res, err)
     return response.success(res, data)
-  }).select('_id rekam_medis')
+  }).select('rekam_medis')
 }
 
-const periksa = (req, res) => {
+const add = (req, res) => {
   let pasienID = req.body.id
   let periksa = req.body.periksa
   let tanggal = new Date()
@@ -30,7 +30,19 @@ const periksa = (req, res) => {
   })
 }
 
+const update = (req, res) => {
+  let pasienID = req.body.id
+  let tanggal = req.body.tanggal
+  
+}
+
+const destroy = (req, res) => {
+
+}
+
 module.exports = {
-  riwayat,
-  periksa
+  get,
+  add,
+  update,
+  destroy
 }

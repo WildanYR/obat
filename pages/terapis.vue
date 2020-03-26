@@ -20,8 +20,8 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="dialog.additTerapis = false">Batal</v-btn>
-                <v-btn v-if="dialog.addTerapis" color="blue darken-1" text>Tambah</v-btn>
-                <v-btn v-else color="blue darken-1" text>Ubah</v-btn>
+                <v-btn v-if="dialog.addTerapis" color="blue darken-1" text @click="addTerapis">Tambah</v-btn>
+                <v-btn v-else color="blue darken-1" text @click="editTerapis">Ubah</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -31,7 +31,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="green darken-1" text @click="dialog.hapusTerapis = false">Tidak</v-btn>
-                <v-btn color="red darken-1" text>Ya</v-btn>
+                <v-btn color="red darken-1" text @click="deleteTerapis">Ya</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -101,12 +101,14 @@ export default {
     }
   },
   async fetch({$axios, store}){
-    let terapisUpdate = await $axios.$post('/databaru', {model: 'terapis'})
-    if(!store.state.terapis.length || terapisUpdate.data.hash != store.state.update['terapis']){
-      let terapis = await $axios.$get('/terapis')
-      store.commit('setTerapis', terapis.data)
-      store.commit('setUpdate', terapisUpdate.data)
-    }
+    let terapis = await $axios.$get('/terapis')
+    store.commit('setTerapis', terapis.data)
+    // let terapisUpdate = await $axios.$post('/databaru', {model: 'terapis'})
+    // if(!store.state.terapis.length || terapisUpdate.data.hash != store.state.update['terapis']){
+    //   let terapis = await $axios.$get('/terapis')
+    //   store.commit('setTerapis', terapis.data)
+    //   store.commit('setUpdate', terapisUpdate.data)
+    // }
   },
   methods: {
     dialogAdd(){
@@ -122,6 +124,38 @@ export default {
     dialogDelete(item){
       this.currentTerapis = JSON.parse(JSON.stringify(item))
       this.dialog.hapusTerapis = true
+    },
+    async addTerapis(){
+      try {
+        await this.$axios.$post('/terapis', {terapis: this.currentTerapis})
+        let terapis = await this.$axios.$get('/terapis')
+        this.$store.commit('setTerapis', terapis.data)
+        this.dialog.additTerapis = false
+      }catch (e){
+        console.log(e)
+      }
+    },
+    async editTerapis(){
+      try {
+        let id = this.currentTerapis._id
+        delete this.currentTerapis._id
+        await this.$axios.$post('/terapis/u', {condition: {_id: id}, update: this.currentTerapis})
+        let terapis = await this.$axios.$get('/terapis')
+        this.$store.commit('setTerapis', terapis.data)
+        this.dialog.additTerapis = false
+      }catch (e){
+        console.log(e)
+      }
+    },
+    async deleteTerapis(){
+      try {
+        await this.$axios.$post('/terapis/d', {condition: {_id: this.currentTerapis._id}})
+        let terapis = await this.$axios.$get('/terapis')
+        this.$store.commit('setTerapis', terapis.data)
+        this.dialog.hapusTerapis = false
+      }catch (e){
+        console.log(e)
+      }
     }
   }
 }

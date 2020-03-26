@@ -4,7 +4,7 @@ export const state = () => ({
   keluhan: [],
   herbal: [],
   penyakit: [],
-  update: {}
+  medis: {}
 })
 
 export const mutations = {
@@ -23,10 +23,7 @@ export const mutations = {
   setPenyakit(state, penyakit) {
     state.penyakit = penyakit
   },
-  setRekamMedis(state, {index, rekam_medis}){
-    state.pasien[index].rekam_medis = rekam_medis
-  },
-  setUpdate(state, update){
-    state.update[update.model] = update.hash
+  setMedis(state, {pasienID, medis}) {
+    state.medis[pasienID] = medis
   }
 }

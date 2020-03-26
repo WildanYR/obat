@@ -20,8 +20,8 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="dialog.additHerbal = false">Batal</v-btn>
-                <v-btn v-if="dialog.addHerbal" color="blue darken-1" text>Tambah</v-btn>
-                <v-btn v-else color="blue darken-1" text>Ubah</v-btn>
+                <v-btn v-if="dialog.addHerbal" color="blue darken-1" text @click="addHerbal">Tambah</v-btn>
+                <v-btn v-else color="blue darken-1" text @click="editHerbal">Ubah</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -31,7 +31,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="green darken-1" text @click="dialog.hapusHerbal = false">Tidak</v-btn>
-                <v-btn color="red darken-1" text>Ya</v-btn>
+                <v-btn color="red darken-1" text @click="deleteHerbal">Ya</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -101,12 +101,14 @@ export default {
     }
   },
   async fetch({$axios, store}){
-    let herbalUpdate = await $axios.$post('/databaru', {model: 'herbal'})
-    if(!store.state.herbal.length || herbalUpdate.data.hash != store.state.update['herbal']){
-      let herbal = await $axios.$get('/herbal')
-      store.commit('setHerbal', herbal.data)
-      store.commit('setUpdate', herbalUpdate.data)
-    }
+     let herbal = await $axios.$get('/herbal')
+    store.commit('setHerbal', herbal.data)
+    // let herbalUpdate = await $axios.$post('/databaru', {model: 'herbal'})
+    // if(!store.state.herbal.length || herbalUpdate.data.hash != store.state.update['herbal']){
+    //   let herbal = await $axios.$get('/herbal')
+    //   store.commit('setHerbal', herbal.data)
+    //   store.commit('setUpdate', herbalUpdate.data)
+    // }
   },
   methods: {
     dialogAdd(){
@@ -122,6 +124,38 @@ export default {
     dialogDelete(item){
       this.currentHerbal = JSON.parse(JSON.stringify(item))
       this.dialog.hapusHerbal = true
+    },
+    async addHerbal(){
+      try {
+        await this.$axios.$post('/herbal', {herbal: this.currentHerbal})
+        let herbal = await this.$axios.$get('/herbal')
+        this.$store.commit('setHerbal', herbal.data)
+        this.dialog.additHerbal = false
+      }catch (e){
+        console.log(e)
+      }
+    },
+    async editHerbal(){
+      try {
+        let id = this.currentHerbal._id
+        delete this.currentHerbal._id
+        await this.$axios.$post('/herbal/u', {condition: {_id: id}, update: this.currentHerbal})
+        let herbal = await this.$axios.$get('/herbal')
+        this.$store.commit('setHerbal', herbal.data)
+        this.dialog.additHerbal = false
+      }catch (e){
+        console.log(e)
+      }
+    },
+    async deleteHerbal(){
+      try {
+        await this.$axios.$post('/herbal/d', {condition: {_id: this.currentHerbal._id}})
+        let herbal = await this.$axios.$get('/herbal')
+        this.$store.commit('setHerbal', herbal.data)
+        this.dialog.hapusHerbal = false
+      }catch (e){
+        console.log(e)
+      }
     }
   }
 }

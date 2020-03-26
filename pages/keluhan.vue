@@ -20,8 +20,8 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="dialog.additKeluhan = false">Batal</v-btn>
-                <v-btn v-if="dialog.addKeluhan" color="blue darken-1" text>Tambah</v-btn>
-                <v-btn v-else color="blue darken-1" text>Ubah</v-btn>
+                <v-btn v-if="dialog.addKeluhan" color="blue darken-1" text @click="addKeluhan">Tambah</v-btn>
+                <v-btn v-else color="blue darken-1" text @click="editKeluhan">Ubah</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -31,7 +31,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="green darken-1" text @click="dialog.hapusKeluhan = false">Tidak</v-btn>
-                <v-btn color="red darken-1" text>Ya</v-btn>
+                <v-btn color="red darken-1" text @click="deleteKeluhan">Ya</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -101,12 +101,14 @@ export default {
     }
   },
   async fetch({$axios, store}){
-    let keluhanUpdate = await $axios.$post('/databaru', {model: 'keluhan'})
-    if(!store.state.keluhan.length || keluhanUpdate.data.hash != store.state.update['keluhan']){
-      let keluhan = await $axios.$get('/keluhan')
-      store.commit('setKeluhan', keluhan.data)
-      store.commit('setUpdate', keluhanUpdate.data)
-    }
+    let keluhan = await $axios.$get('/keluhan')
+    store.commit('setKeluhan', keluhan.data)
+    // let keluhanUpdate = await $axios.$post('/databaru', {model: 'keluhan'})
+    // if(!store.state.keluhan.length || keluhanUpdate.data.hash != store.state.update['keluhan']){
+    //   let keluhan = await $axios.$get('/keluhan')
+    //   store.commit('setKeluhan', keluhan.data)
+    //   store.commit('setUpdate', keluhanUpdate.data)
+    // }
   },
   methods: {
     dialogAdd(){
@@ -122,6 +124,38 @@ export default {
     dialogDelete(item){
       this.currentKeluhan = JSON.parse(JSON.stringify(item))
       this.dialog.hapusKeluhan = true
+    },
+    async addKeluhan(){
+      try {
+        await this.$axios.$post('/keluhan', {keluhan: this.currentKeluhan})
+        let keluhan = await this.$axios.$get('/keluhan')
+        this.$store.commit('setKeluhan', keluhan.data)
+        this.dialog.additKeluhan = false
+      }catch (e){
+        console.log(e)
+      }
+    },
+    async editKeluhan(){
+      try {
+        let id = this.currentKeluhan._id
+        delete this.currentKeluhan._id
+        await this.$axios.$post('/keluhan/u', {condition: {_id: id}, update: this.currentKeluhan})
+        let keluhan = await this.$axios.$get('/keluhan')
+        this.$store.commit('setKeluhan', keluhan.data)
+        this.dialog.additKeluhan = false
+      }catch (e){
+        console.log(e)
+      }
+    },
+    async deleteKeluhan(){
+      try {
+        await this.$axios.$post('/keluhan/d', {condition: {_id: this.currentKeluhan._id}})
+        let keluhan = await this.$axios.$get('/keluhan')
+        this.$store.commit('setKeluhan', keluhan.data)
+        this.dialog.hapusKeluhan = false
+      }catch (e){
+        console.log(e)
+      }
     }
   }
 }

@@ -1,8 +1,7 @@
 <template>
-  <v-layout>
+  <!-- <v-layout>
     <v-container fluid>
       <v-row>
-        <!-- Information Card -->
         <v-col cols="12">
           <v-row justify="space-around" align="center">
             <v-col cols="12" sm="3">
@@ -29,25 +28,28 @@
             </v-col>
           </v-row>
         </v-col>
-        <!-- Pasien Chart -->
         <v-col cols="12">
 
         </v-col>
       </v-row>
     </v-container>
-  </v-layout>
+  </v-layout> -->
+  <div></div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      cards: [
-        {title: 'Pasien hari ini', value: '15', icon: 'fas fa-user-injured'},
-        {title: 'Pasien terdaftar', value: '37', icon: 'fas fa-address-book'},
-        {title: 'Terapis terdaftar', value: '4', icon: 'fas fa-user-md'}
-      ]
-    }
+  // data() {
+  //   return {
+  //     cards: [
+  //       {title: 'Pasien hari ini', value: '15', icon: 'fas fa-user-injured'},
+  //       {title: 'Pasien terdaftar', value: '37', icon: 'fas fa-address-book'},
+  //       {title: 'Terapis terdaftar', value: '4', icon: 'fas fa-user-md'}
+  //     ]
+  //   }
+  // },
+  created(){
+    this.$router.replace('/pasien')
   }
 }
 </script>

@@ -77,15 +77,28 @@
                       <div class="headline font-weight-medium">{{'Detail '+currentPasien.nama}}</div>
                     </v-col>
                     <v-col cols="12" md="8">
-                      <v-text-field
-                        v-model="cariTanggal"
-                        append-icon="fas fa-calendar"
-                        label="Cari"
-                        single-line
-                        hide-details
-                        dense
-                        flat
-                      ></v-text-field>
+                      <v-menu
+                        v-model="dialog.searchTanggal"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            :value="showTanggal"
+                            append-icon="fas fa-calendar"
+                            label="Cari"
+                            single-line
+                            hide-details
+                            dense
+                            flat
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="cariTanggal" @input="dialog.searchTanggal = false"></v-date-picker>
+                      </v-menu>
                     </v-col>
                     <v-col cols="12" md="4">
                       <v-btn color="primary" elevation="0" block @click="dialog.addMedis = true"><v-icon left>fas fa-plus</v-icon> Tambah data</v-btn>
@@ -123,7 +136,8 @@ export default {
       currentMedis: {},
       cariTanggal: '',
       dialog: {
-        addMedis: false
+        addMedis: false,
+        searchTanggal: false
       },
       headers: [
         { text: 'Tanggal', value: 'tanggal' },
@@ -159,6 +173,13 @@ export default {
     },
     showTanggal(tanggal){
       let tgl = new Date(tanggal)
+      return tgl.getDate().toString()+' '+tgl.toLocaleString('id', {month: 'long'})+' '+tgl.getFullYear().toString()
+    }
+  },
+  computed: {
+    showTanggal(){
+      if (this.cariTanggal == '') return ''
+      let tgl = new Date(this.cariTanggal)
       return tgl.getDate().toString()+' '+tgl.toLocaleString('id', {month: 'long'})+' '+tgl.getFullYear().toString()
     }
   }

@@ -66,7 +66,7 @@
               <v-data-table
                 :headers="headers"
                 :items="$store.state.medis[currentPasien._id]"
-                :search="cariTanggal"
+                :search="iCariTanggal"
                 loading-text="Memuat data"
                 no-data-text="Tidak ada data"
                 no-results-text="Pencarian tidak ditemukan"
@@ -87,13 +87,15 @@
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            :value="showTanggal"
+                            :value="dispTanggal"
                             append-icon="fas fa-calendar"
+                            clearable
                             label="Cari"
                             single-line
                             hide-details
                             dense
                             flat
+                            @click:clear="clearTanggal"
                             v-on="on"
                           ></v-text-field>
                         </template>
@@ -174,10 +176,20 @@ export default {
     showTanggal(tanggal){
       let tgl = new Date(tanggal)
       return tgl.getDate().toString()+' '+tgl.toLocaleString('id', {month: 'long'})+' '+tgl.getFullYear().toString()
+    },
+    clearTanggal(){
+      this.cariTanggal = ''
     }
   },
   computed: {
-    showTanggal(){
+    iCariTanggal(){
+      if (this.cariTanggal == '') return ''
+      let tanggal = new Date(this.cariTanggal)
+      tanggal.setHours(0,0,0,0)
+      tanggal = tanggal.toString()
+      return tanggal
+    },
+    dispTanggal(){
       if (this.cariTanggal == '') return ''
       let tgl = new Date(this.cariTanggal)
       return tgl.getDate().toString()+' '+tgl.toLocaleString('id', {month: 'long'})+' '+tgl.getFullYear().toString()
